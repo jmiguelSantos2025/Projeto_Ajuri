@@ -30,7 +30,8 @@ O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e
 
 ## Fluxo do sistema
 
-![Diagrama de atividades]<img width="680" height="930" alt="DIAGRAMA DE ATIVIDADES" src="https://github.com/user-attachments/assets/cd20d43e-3cd2-437d-a494-247c8d29bd3e" />
+<img width="680" height="930" alt="DIAGRAMA DE ATIVIDADES" src="https://github.com/user-attachments/assets/cd20d43e-3cd2-437d-a494-247c8d29bd3e" />
+[Diagrama de atividades]
 
 
 ## Tecnologias
@@ -50,7 +51,7 @@ O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e
 1. Clone o repositório:
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone https://github.com/jmiguelSantos2025/Projeto_Ajuri
 cd NOME_DA_PASTA
 ```
 
