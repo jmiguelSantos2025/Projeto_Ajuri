@@ -31,7 +31,6 @@ O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e
 ## Fluxo do sistema
 
 <img width="680" height="930" alt="DIAGRAMA DE ATIVIDADES" src="https://github.com/user-attachments/assets/cd20d43e-3cd2-437d-a494-247c8d29bd3e" />
-[Diagrama de atividades]
 
 
 ## Tecnologias
