@@ -1,0 +1,32 @@
+{% extends "base_auth.html" %}
+{% import "_macros.html" as m %}
+
+{% block titulo %}Entrar — Ajuri{% endblock %}
+{% block eyebrow %}Acesso à plataforma{% endblock %}
+{% block titulo_pagina %}Organize o trabalho em <span class="editorial">grupo.</span>{% endblock %}
+{% block intro %}Entre para acompanhar tarefas, prazos e responsáveis do seu projeto.{% endblock %}
+
+{% block formulario %}
+<form method="post">
+  {{ m.mensagens() }}
+
+  <div class="field">
+    <label for="email">E-mail</label>
+    <input class="input" id="email" name="email" type="email" autocomplete="email" required>
+  </div>
+
+  {{ m.campo_senha('senha', 'Senha', 'current-password') }}
+
+  <div class="auth-meta">
+    <label class="check-row"><input type="checkbox" name="lembrar"> Lembrar de mim</label>
+    <a href="/RedefinirSenha">Esqueceu a senha?</a>
+  </div>
+
+  <button class="btn btn--primary auth-submit" type="submit">Entrar</button>
+</form>
+{% endblock %}
+
+{% block rodape %}Ainda não participa? <a href="/cadastrarNovoUsuario">Criar conta</a>{% endblock %}
+
+{% block painel_eyebrow %}Planejamento compartilhado{% endblock %}
+{% block painel_titulo %}Um lugar direto para o seu projeto acadêmico.{% endblock %}

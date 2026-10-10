@@ -1,0 +1,39 @@
+{% extends "base_app.html" %}
+
+{% block titulo %}Contatos — Ajuri{% endblock %}
+
+{% block conteudo %}
+<section class="page-heading block cross">
+  <div>
+    <p class="eyebrow">Rede do projeto</p>
+    <h1>[ Contatos ]</h1>
+  </div>
+  <button class="btn btn--primary" type="button" data-open-modal="contact-modal">Adicionar contato</button>
+</section>
+
+<section class="table-block block">
+  <div class="table-wrap">
+    <table class="contacts-table">
+      <caption class="sr-only">Lista de contatos do projeto</caption>
+      <thead>
+        <tr><th>Nome</th><th>E-mail</th><th>Telefone</th></tr>
+      </thead>
+      <tbody>
+        {% for c in contatos %}
+        <tr>
+          <td><span class="mobile-label">Nome</span>{{ c.nome }}</td>
+          <td><span class="mobile-label">E-mail</span>{{ c.email }}</td>
+          <td><span class="mobile-label">Telefone</span>{{ c.telefone or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">Nenhum contato cadastrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+{% block modais %}
+{% include "_modal_contato.html" %}
+{% endblock %}

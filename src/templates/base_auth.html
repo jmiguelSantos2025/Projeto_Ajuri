@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{# Layout das telas de acesso: formulário à esquerda e painel decorativo à direita #}
+{% block corpo %}
+<main class="auth-shell">
+  <div class="auth-grid grid">
+    <section class="auth-form block cross" aria-labelledby="titulo-pagina">
+      <a class="logo" href="/login">&lt; Ajuri /&gt;</a>
+      <p class="eyebrow">{% block eyebrow %}{% endblock %}</p>
+      <h1 id="titulo-pagina">{% block titulo_pagina %}{% endblock %}</h1>
+      <p class="auth-intro">{% block intro %}{% endblock %}</p>
+
+      {% block formulario %}{% endblock %}
+
+      <p class="auth-switch">{% block rodape %}{% endblock %}</p>
+    </section>
+
+    <aside class="studs-panel block block--tint" aria-label="Painel decorativo">
+      <div class="studs-copy">
+        <p class="eyebrow">{% block painel_eyebrow %}{% endblock %}</p>
+        <h2>{% block painel_titulo %}{% endblock %}</h2>
+      </div>
+      <div class="studs" aria-hidden="true">
+        {% for _ in range(25) %}<span class="stud"></span>{% endfor %}
+      </div>
+    </aside>
+  </div>
+</main>
+{% endblock %}

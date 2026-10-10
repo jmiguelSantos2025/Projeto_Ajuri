@@ -1,0 +1,77 @@
+{% extends "base_app.html" %}
+{% import "_macros.html" as m %}
+
+{% block titulo %}Editar tarefa — Ajuri{% endblock %}
+
+{% block conteudo %}
+<section class="page-heading block cross">
+  <div>
+    <p class="eyebrow">Detalhes da tarefa</p>
+    <h1>Editar <span class="editorial">tarefa</span></h1>
+  </div>
+  <a class="btn btn--secondary" href="/Home">Voltar para a Home</a>
+</section>
+
+<div class="edit-layout grid">
+  <section class="edit-form block">
+    <form method="post" class="form-grid">
+      <input type="hidden" name="acao" value="editar_tarefa">
+      <input type="hidden" name="id_tarefa" value="{{ tarefa.id_tarefa or '' }}">
+
+      <div class="field field--wide">
+        <label for="titulo">Título</label>
+        <input class="input" id="titulo" name="titulo" type="text" value="{{ tarefa.titulo or '' }}" required>
+      </div>
+
+      <div class="field field--wide">
+        <label for="descricao">Descrição</label>
+        <textarea class="textarea" id="descricao" name="descricao">{{ tarefa.descricao or '' }}</textarea>
+      </div>
+
+      <div class="field">
+        <label for="data_final">Prazo</label>
+        <input class="input" id="data_final" name="data_final" type="date" value="{{ tarefa.data_final.isoformat() if tarefa.data_final else '' }}" required>
+      </div>
+
+      <div class="field">
+        <label for="prioridade">Prioridade</label>
+        <select class="select" id="prioridade" name="prioridade">{{ m.opcoes_prioridade(tarefa.prioridade or 'MEDIA') }}</select>
+      </div>
+
+      <div class="field">
+        <label for="status">Status</label>
+        <select class="select" id="status" name="status">{{ m.opcoes_status(tarefa.status or 'A_FAZER') }}</select>
+      </div>
+
+      <div class="field">
+        <label for="id_contato">Responsável</label>
+        <select class="select" id="id_contato" name="id_contato">{{ m.opcoes_contatos(contatos, tarefa.id_contato) }}</select>
+      </div>
+
+      <div class="form-actions field--wide">
+        <a class="btn btn--secondary" href="/Home">Cancelar</a>
+        <button class="btn btn--primary" type="button" data-request-save>Salvar alterações</button>
+      </div>
+
+      <div class="confirm-save field--wide notice notice--success" data-save-confirmation hidden>
+        <p>Deseja salvar as alterações?</p>
+        <div class="form-actions">
+          <button class="btn btn--secondary" type="button" data-cancel-save>Voltar</button>
+          <button class="btn btn--primary" type="submit">Confirmar e salvar</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <aside class="edit-aside block block--tint">
+    <div>
+      <p class="eyebrow">Estado atual</p>
+      {% if tarefa.status %}
+      <h2>{{ m.STATUS[tarefa.status].nome }}</h2>
+      {{ m.etiqueta_status(tarefa.status) }}
+      {% endif %}
+    </div>
+    <p>Atrasos são calculados automaticamente a partir do prazo e não precisam ser selecionados.</p>
+  </aside>
+</div>
+{% endblock %}
