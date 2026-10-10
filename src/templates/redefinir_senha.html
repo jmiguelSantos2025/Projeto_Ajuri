@@ -1,24 +1,25 @@
 {% extends "base_auth.html" %}
+{% import "_macros.html" as m %}
 
-{% block titulo_pagina %}Redefinir senha | Ajuri{% endblock %}
-{% block destaque %}Um novo começo para sua rotina.{% endblock %}
-{% block texto_destaque %}Vamos ajudar você a voltar ao seu espaço de organização.{% endblock %}
+{% block titulo %}Redefinir senha — Ajuri{% endblock %}
+{% block eyebrow %}Recuperar acesso{% endblock %}
+{% block titulo_pagina %}Redefina sua <span class="editorial">senha.</span>{% endblock %}
+{% block intro %}Informe o e-mail cadastrado para receber as instruções.{% endblock %}
 
-{% block conteudo %}
-    <p class="auth-form-etiqueta">RECUPERE SEU ACESSO</p>
-    <h2>Redefina sua senha.</h2>
-    <p class="auth-form-descricao">Informe seu e-mail para receber as instruções.</p>
+{% block formulario %}
+<form method="post">
+  {{ m.mensagens() }}
 
-    <form class="auth-formulario" action="/RedefinirSenha" method="post">
-        <div class="auth-campo">
-            <label for="email">E-mail</label>
-            <div class="auth-entrada">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5h17v13h-17zM4 6l8 7 8-7"/></svg>
-                <input id="email" name="email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required>
-            </div>
-        </div>
-        <button class="auth-botao" type="submit">Enviar e-mail <span aria-hidden="true">→</span></button>
-    </form>
+  <div class="field">
+    <label for="email">E-mail</label>
+    <input class="input" id="email" name="email" type="email" autocomplete="email" required>
+  </div>
 
-    <p class="auth-alternativa"><a href="/login">← Voltar ao login</a></p>
+  <button class="btn btn--primary auth-submit" type="submit">Enviar e-mail</button>
+</form>
 {% endblock %}
+
+{% block rodape %}<a href="/login">Voltar para o login</a>{% endblock %}
+
+{% block painel_eyebrow %}Acesso seguro{% endblock %}
+{% block painel_titulo %}Você receberá um link válido por tempo limitado.{% endblock %}
