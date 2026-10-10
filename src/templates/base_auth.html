@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo_pagina %}Ajuri{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body class="auth-body">
+    <main class="auth-layout">
+        <section class="auth-painel" aria-label="Organize sua rotina com Ajuri">
+            <a class="auth-logo" href="/login" aria-label="Ajuri - início">
+                <span class="auth-logo-icone" aria-hidden="true">✓</span>
+                <span>Ajuri</span>
+            </a>
+
+            <div class="auth-mensagem">
+                <p class="auth-etiqueta">UM PASSO DE CADA VEZ</p>
+                <h1>{% block destaque %}Organize seu dia com mais leveza.{% endblock %}</h1>
+                <p class="auth-descricao">{% block texto_destaque %}Mais clareza para sua rotina. Mais espaço para o que realmente importa.{% endblock %}</p>
+            </div>
+
+            <div class="auth-ilustracao" aria-hidden="true">
+                <div class="auth-lista">
+                    <div class="auth-lista-titulo">
+                        <strong>Seu dia, mais leve.</strong>
+                        <span>•••</span>
+                    </div>
+                    <div class="auth-item auth-item-concluido">
+                        <span class="auth-caixa">✓</span>
+                        <span>Planejar a semana</span>
+                    </div>
+                    <div class="auth-item">
+                        <span class="auth-caixa"></span>
+                        <span>Dar vida às ideias</span>
+                    </div>
+                    <div class="auth-item">
+                        <span class="auth-caixa"></span>
+                        <span>Reservar tempo para você</span>
+                    </div>
+                    <div class="auth-progresso"><span></span></div>
+                </div>
+                <div class="auth-lembrete">
+                    <span class="auth-lembrete-check">✓</span>
+                    <span><strong>Uma tarefa de cada vez.</strong><br>Você está no caminho certo.</span>
+                </div>
+            </div>
+
+            <p class="auth-frase-final">✦ &nbsp;Menos entropia. Mais ordem.</p>
+        </section>
+
+        <section class="auth-conteudo">
+            <p class="auth-cabecalho">Seu espaço pessoal de organização</p>
+            <div class="auth-cartao">
+                {% block conteudo %}{% endblock %}
+            </div>
+            <p class="auth-protecao"><span aria-hidden="true">♢</span> Seus dados ficam protegidos na sua conta.</p>
+            <footer class="auth-rodape">
+                <span>© 2026 Ajuri</span>
+                <span>Organize no seu ritmo</span>
+            </footer>
+        </section>
+    </main>
+
+    <script>
+        // Alterna a visibilidade das senhas nos formulários.
+        document.querySelectorAll("[data-mostrar-senha]").forEach(function (botao) {
+            botao.addEventListener("click", function () {
+                const campo = document.getElementById(botao.getAttribute("aria-controls"));
+                const mostrar = campo.type === "password";
+                campo.type = mostrar ? "text" : "password";
+                botao.setAttribute("aria-pressed", String(mostrar));
+                botao.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+            });
+        });
+    </script>
+</body>
+</html>

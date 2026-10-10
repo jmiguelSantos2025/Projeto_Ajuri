@@ -1,0 +1,51 @@
+{% extends "base_auth.html" %}
+
+{% block titulo_pagina %}Criar conta | Ajuri{% endblock %}
+{% block destaque %}Uma rotina mais leve começa com você.{% endblock %}
+{% block texto_destaque %}Crie seu espaço e organize suas tarefas no seu próprio ritmo.{% endblock %}
+
+{% block conteudo %}
+    <p class="auth-form-etiqueta">NOVO POR AQUI?</p>
+    <h2>Crie sua conta.</h2>
+    <p class="auth-form-descricao">Seu espaço pessoal para tirar os planos do papel.</p>
+
+    <form class="auth-formulario auth-formulario-cadastro" action="/cadastrarNovoUsuario" method="post">
+        <div class="auth-campo">
+            <label for="nome">Nome completo</label>
+            <div class="auth-entrada">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+                <input id="nome" name="nome" type="text" placeholder="Seu nome" autocomplete="name" required>
+            </div>
+        </div>
+        <div class="auth-campo">
+            <label for="email">E-mail</label>
+            <div class="auth-entrada">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5h17v13h-17zM4 6l8 7 8-7"/></svg>
+                <input id="email" name="email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required>
+            </div>
+        </div>
+        <div class="auth-campo">
+            <label for="senha">Senha</label>
+            <div class="auth-entrada">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg>
+                <input id="senha" name="senha" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required>
+                <button class="auth-olho" type="button" data-mostrar-senha aria-controls="senha" aria-label="Mostrar senha" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="auth-campo">
+            <label for="confirmar_senha">Confirmar senha</label>
+            <div class="auth-entrada">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg>
+                <input id="confirmar_senha" name="confirmar_senha" type="password" placeholder="Digite a senha novamente" autocomplete="new-password" required>
+                <button class="auth-olho" type="button" data-mostrar-senha aria-controls="confirmar_senha" aria-label="Mostrar senha" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+                </button>
+            </div>
+        </div>
+        <button class="auth-botao" type="submit">Criar conta <span aria-hidden="true">→</span></button>
+    </form>
+
+    <p class="auth-alternativa">Já tem uma conta? <a href="/login">Entrar</a></p>
+{% endblock %}

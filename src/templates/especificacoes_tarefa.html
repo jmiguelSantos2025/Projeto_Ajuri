@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especificações da tarefa | Ajuri</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body class="spec-body">
+    <header class="spec-topo">
+        <a class="spec-logo" href="/Home"><span aria-hidden="true">✓</span> Ajuri</a>
+        <a class="spec-voltar" href="/Home">← Voltar para a Home</a>
+    </header>
+
+    <main class="spec-principal">
+        <section class="spec-cartao">
+            <div class="spec-cabecalho">
+                <p class="spec-etiqueta">ORGANIZE SEU PRÓXIMO PASSO</p>
+                <h1>Especificações da tarefa</h1>
+                <p>Revise os detalhes e mantenha seus planos em dia.</p>
+            </div>
+
+            <form class="spec-formulario" action="/especificacoesTarefas" method="post" onsubmit="return confirm('Deseja salvar as alterações?')">
+                <div class="spec-campo">
+                    <label for="titulo">Título <span>*</span></label>
+                    <input id="titulo" name="titulo" type="text" value="{{ tarefa.titulo|default('') }}" placeholder="Ex.: Planejar a semana" required>
+                </div>
+                <div class="spec-campo">
+                    <label for="descricao">Descrição <small>Opcional</small></label>
+                    <textarea id="descricao" name="descricao" rows="5" placeholder="Adicione alguns detalhes para ajudar você a começar...">{{ tarefa.descricao|default('') }}</textarea>
+                </div>
+                <div class="spec-campo">
+                    <label for="data_final">Prazo <small>Opcional</small></label>
+                    <input id="data_final" name="data_final" type="date" value="{{ tarefa.data_final|default('') }}">
+                </div>
+                <div class="spec-grade">
+                    <div class="spec-campo">
+                        <label for="prioridade">Prioridade</label>
+                        <select id="prioridade" name="prioridade">
+                            <option value="Alta" {% if tarefa.prioridade|default('Média') == 'Alta' %}selected{% endif %}>Alta</option>
+                            <option value="Média" {% if tarefa.prioridade|default('Média') == 'Média' %}selected{% endif %}>Média</option>
+                            <option value="Baixa" {% if tarefa.prioridade|default('Média') == 'Baixa' %}selected{% endif %}>Baixa</option>
+                        </select>
+                    </div>
+                    <div class="spec-campo">
+                        <label for="status">Status</label>
+                        <select id="status" name="status">
+                            <option value="A fazer" {% if tarefa.status|default('A fazer') == 'A fazer' %}selected{% endif %}>A fazer</option>
+                            <option value="Fazendo" {% if tarefa.status|default('A fazer') == 'Fazendo' %}selected{% endif %}>Fazendo</option>
+                            <option value="Concluída" {% if tarefa.status|default('A fazer') == 'Concluída' %}selected{% endif %}>Concluída</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="spec-campo">
+                    <label for="id_contato">Responsável</label>
+                    <select id="id_contato" name="id_contato">
+                        <option value="">Selecione um contato</option>
+                        {% for contato in contatos|default([]) %}
+                            <option value="{{ contato.id }}" {% if tarefa.id_contato|default('') == contato.id %}selected{% endif %}>{{ contato.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="spec-acoes">
+                    <a class="spec-cancelar" href="/Home">Cancelar</a>
+                    <button class="spec-salvar" type="submit">Salvar alterações <span aria-hidden="true">→</span></button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
