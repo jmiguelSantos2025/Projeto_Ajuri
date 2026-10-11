@@ -69,20 +69,10 @@ def redefinir_senha():
     return render_template("redefinir_senha.html")
 
 
-@app.route("/Home", methods=["GET", "POST"])
-def home():
-    return render_template("home.html", usuario=USUARIO, contatos=CONTATOS, tarefas=TAREFAS)
-
-
 @app.route("/especificacoesTarefas", methods=["GET", "POST"])
 def especificacoes_tarefa():
     return render_template("especificacoes_tarefa.html", usuario=USUARIO,
                            contatos=CONTATOS, tarefa=TAREFAS[1])
-
-
-@app.route("/listarcontatos", methods=["GET", "POST"])
-def listar_contatos():
-    return render_template("listar_contatos.html", usuario=USUARIO, contatos=CONTATOS)
 
 
 if __name__ == "__main__":
