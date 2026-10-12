@@ -75,5 +75,10 @@ def especificacoes_tarefa():
                            contatos=CONTATOS, tarefa=TAREFAS[1])
 
 
+@app.route("/Home", methods=["GET", "POST"])
+def home():
+    return render_template("home.html", usuario=USUARIO, contatos=CONTATOS, tarefas=TAREFAS)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
