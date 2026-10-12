@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block titulo %}Ajuri{% endblock %}</title>
+  <script>
+    try {
+      document.documentElement.dataset.theme =
+        localStorage.getItem("ajuri-theme") === "dark" ? "dark" : "light"
+    } catch (error) {
+      console.error("Não foi possível recuperar o tema salvo do Ajuri.", error)
+      document.documentElement.dataset.theme = "light"
+    }
+  </script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 </head>
 <body>

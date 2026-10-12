@@ -1,3 +1,29 @@
+const themeToggle = document.querySelector("[data-theme-toggle]")
+const updateThemeToggle = (theme) => {
+  if (!themeToggle) return
+  const dark = theme === "dark"
+  themeToggle.textContent = dark ? "☀ Tema claro" : "☾ Tema escuro"
+  themeToggle.setAttribute("aria-label", dark ? "Ativar modo claro" : "Ativar modo escuro")
+  themeToggle.setAttribute("aria-pressed", String(dark))
+}
+
+const currentTheme =
+  document.documentElement.dataset.theme === "dark" ? "dark" : "light"
+document.documentElement.dataset.theme = currentTheme
+updateThemeToggle(currentTheme)
+
+themeToggle?.addEventListener("click", () => {
+  const nextTheme =
+    document.documentElement.dataset.theme === "dark" ? "light" : "dark"
+  document.documentElement.dataset.theme = nextTheme
+  updateThemeToggle(nextTheme)
+  try {
+    localStorage.setItem("ajuri-theme", nextTheme)
+  } catch (error) {
+    console.error("Não foi possível salvar a preferência de tema do Ajuri.", error)
+  }
+})
+
 document.querySelectorAll("[data-password-toggle]").forEach((button) => {
   button.addEventListener("click", () => {
     const input = document.getElementById(button.dataset.passwordToggle)
