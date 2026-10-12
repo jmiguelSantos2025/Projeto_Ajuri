@@ -31,9 +31,9 @@
   --color-status-doing-border: #afcdeb;
   --color-status-done-border: #c2d68e;
   --color-status-late-border: #e3aaa5;
-  --color-priority: #5d6664;
-  --color-priority-high: #222725;
-  --color-priority-low: #a5adaa;
+  --color-priority: #fdf504;
+  --color-priority-high: #ca0101;
+  --color-priority-low: #00ff00;
   --color-stud-bg: #cae9e3;
   --color-stud-border: #a9d9d0;
   --color-stud-highlight: rgba(255, 255, 255, .75);
@@ -96,9 +96,9 @@ html[data-theme="dark"] {
   --color-status-doing-border: #466b91;
   --color-status-done-border: #607c37;
   --color-status-late-border: #87514d;
-  --color-priority: #a6bbb4;
-  --color-priority-high: #e8f3ef;
-  --color-priority-low: #71857e;
+  --color-priority: #fdf504;
+  --color-priority-high: #ca0101;
+  --color-priority-low: #00ff00;
   --color-stud-bg: #294a41;
   --color-stud-border: #3d685c;
   --color-stud-highlight: rgba(255, 255, 255, .12);
