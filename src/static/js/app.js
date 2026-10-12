@@ -59,6 +59,23 @@ document.querySelectorAll("dialog").forEach((dialog) => {
 })
 
 const rows = [...document.querySelectorAll(".task-row")]
+const taskList = document.querySelector(".task-list")
+const markTaskEntryComplete = (event) => {
+  if (event.target instanceof Element && event.target.matches(".task-row")) {
+    event.target.dataset.entered = "true"
+  }
+}
+taskList?.querySelectorAll(".task-row").forEach((row) => {
+  const entryAlreadyFinished = (row.getAnimations?.() || [])
+    .some(
+      (animation) =>
+        animation.animationName === "task-enter" &&
+        animation.playState === "finished",
+    )
+  if (entryAlreadyFinished) row.dataset.entered = "true"
+})
+taskList?.addEventListener("animationend", markTaskEntryComplete)
+taskList?.addEventListener("animationcancel", markTaskEntryComplete)
 const filters = [...document.querySelectorAll("[data-filter]")]
 const search = document.querySelector("[data-task-search]")
 const emptyState = document.querySelector("[data-empty-state]")
