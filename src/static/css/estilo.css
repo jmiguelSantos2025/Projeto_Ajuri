@@ -373,9 +373,21 @@ button { cursor: pointer; }
 .task-meta-label { display: block; margin-bottom: 2px; color: var(--color-muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .task-meta-value { display: block; overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .priority { display: inline-flex; align-items: center; gap: 7px; }
-.priority::before { content: ""; width: 8px; height: 8px; background: var(--color-priority); border-radius: 2px; }
-.priority--high::before { background: var(--color-priority-high); }
-.priority--low::before { background: var(--color-priority-low); }
+.priority::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--color-priority);
+  border-radius: 2px;
+}
+
+.priority--high::before {
+  background: var(--color-priority-high);
+}
+
+.priority--low::before {
+  background: var(--color-priority-low);
+}
 .status { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 9px; border: 1px solid transparent; border-radius: 4px; font-size: 12px; font-weight: 700; white-space: nowrap; }
 .status--todo { background: var(--status-todo-bg); border-color: var(--color-status-todo-border); color: var(--status-todo-text); }
 .status--doing { background: var(--status-doing-bg); border-color: var(--color-status-doing-border); color: var(--status-doing-text); }
