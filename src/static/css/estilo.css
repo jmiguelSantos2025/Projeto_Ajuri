@@ -257,9 +257,9 @@ button { cursor: pointer; }
 .task-meta-label { display: block; margin-bottom: 2px; color: var(--color-muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .task-meta-value { display: block; overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .priority { display: inline-flex; align-items: center; gap: 7px; }
-.priority::before { content: ""; width: 8px; height: 8px; background: #5d6664; border-radius: 2px; }
-.priority--high::before { background: #222725; }
-.priority--low::before { background: #a5adaa; }
+.priority::before { content: ""; width: 8px; height: 8px; background: #faf205; border-radius: 2px; }
+.priority--high::before { background: #e40501; }
+.priority--low::before { background: #07c938; }
 .status { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 9px; border: 1px solid transparent; border-radius: 4px; font-size: 12px; font-weight: 700; white-space: nowrap; }
 .status--todo { background: var(--status-todo-bg); border-color: #e8d583; color: var(--status-todo-text); }
 .status--doing { background: var(--status-doing-bg); border-color: #afcdeb; color: var(--status-doing-text); }
