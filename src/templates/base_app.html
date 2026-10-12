@@ -5,9 +5,9 @@
 {% set aba_contatos = request.path.lower() == '/listarcontatos' %}
 <main class="shell grid">
   <header class="topbar grid">
-    <div class="brand-block block"><a class="logo" href="/Home">&lt; Ajuri /&gt;</a></div>
+    <div class="brand-block block"><a class="logo" href="/home">&lt; Ajuri /&gt;</a></div>
     <nav class="tabs" aria-label="Navegação principal">
-      <a class="tab" href="/Home" {% if not aba_contatos %}aria-current="page"{% endif %}>Tarefas</a>
+      <a class="tab" href="/home" {% if not aba_contatos %}aria-current="page"{% endif %}>Tarefas</a>
       <a class="tab" href="/listarcontatos" {% if aba_contatos %}aria-current="page"{% endif %}>Contatos</a>
     </nav>
     <div class="user-block block">
