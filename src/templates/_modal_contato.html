@@ -1,0 +1,32 @@
+{# Janela "Novo contato" (usada na Home e na tela de Contatos) #}
+<dialog class="modal" id="contact-modal">
+  <div class="modal-head">
+    <div>
+      <p class="eyebrow">Equipe</p>
+      <h2>Novo contato</h2>
+    </div>
+    <button class="btn btn--icon" type="button" data-close-modal aria-label="Fechar">×</button>
+  </div>
+
+  <form class="modal-body" method="post">
+    <input type="hidden" name="acao" value="novo_contato">
+    <div class="form-grid">
+      <div class="field field--wide">
+        <label for="nome">Nome</label>
+        <input class="input" id="nome" name="nome" type="text" required>
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input class="input" id="email" name="email" type="email" required>
+      </div>
+      <div class="field">
+        <label for="telefone">Telefone</label>
+        <input class="input" id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000">
+      </div>
+      <div class="form-actions field--wide">
+        <button class="btn btn--secondary" type="button" data-close-modal>Cancelar</button>
+        <button class="btn btn--primary" type="submit">Salvar</button>
+      </div>
+    </div>
+  </form>
+</dialog>
