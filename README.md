@@ -51,7 +51,7 @@ O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e
 
 ```bash
 git clone https://github.com/jmiguelSantos2025/Projeto_Ajuri
-cd NOME_DA_PASTA
+cd Projeto_Ajuri
 ```
 
 2. Crie e ative o ambiente virtual (Windows):
