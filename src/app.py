@@ -80,5 +80,10 @@ def home():
     return render_template("home.html", usuario=USUARIO, contatos=CONTATOS, tarefas=TAREFAS)
 
 
+@app.route("/listarcontatos", methods=["GET", "POST"])
+def listar_contatos():
+    return render_template("listar_contatos.html", usuario=USUARIO, contatos=CONTATOS)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
