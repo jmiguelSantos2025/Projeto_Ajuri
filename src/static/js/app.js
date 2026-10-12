@@ -1,3 +1,29 @@
+const themeToggle = document.querySelector("[data-theme-toggle]")
+const updateThemeToggle = (theme) => {
+  if (!themeToggle) return
+  const dark = theme === "dark"
+  themeToggle.textContent = dark ? "☀ Tema claro" : "☾ Tema escuro"
+  themeToggle.setAttribute("aria-label", dark ? "Ativar modo claro" : "Ativar modo escuro")
+  themeToggle.setAttribute("aria-pressed", String(dark))
+}
+
+const currentTheme =
+  document.documentElement.dataset.theme === "dark" ? "dark" : "light"
+document.documentElement.dataset.theme = currentTheme
+updateThemeToggle(currentTheme)
+
+themeToggle?.addEventListener("click", () => {
+  const nextTheme =
+    document.documentElement.dataset.theme === "dark" ? "light" : "dark"
+  document.documentElement.dataset.theme = nextTheme
+  updateThemeToggle(nextTheme)
+  try {
+    localStorage.setItem("ajuri-theme", nextTheme)
+  } catch (error) {
+    console.error("Não foi possível salvar a preferência de tema do Ajuri.", error)
+  }
+})
+
 document.querySelectorAll("[data-password-toggle]").forEach((button) => {
   button.addEventListener("click", () => {
     const input = document.getElementById(button.dataset.passwordToggle)
@@ -33,6 +59,23 @@ document.querySelectorAll("dialog").forEach((dialog) => {
 })
 
 const rows = [...document.querySelectorAll(".task-row")]
+const taskList = document.querySelector(".task-list")
+const markTaskEntryComplete = (event) => {
+  if (event.target instanceof Element && event.target.matches(".task-row")) {
+    event.target.dataset.entered = "true"
+  }
+}
+taskList?.querySelectorAll(".task-row").forEach((row) => {
+  const entryAlreadyFinished = (row.getAnimations?.() || [])
+    .some(
+      (animation) =>
+        animation.animationName === "task-enter" &&
+        animation.playState === "finished",
+    )
+  if (entryAlreadyFinished) row.dataset.entered = "true"
+})
+taskList?.addEventListener("animationend", markTaskEntryComplete)
+taskList?.addEventListener("animationcancel", markTaskEntryComplete)
 const filters = [...document.querySelectorAll("[data-filter]")]
 const search = document.querySelector("[data-task-search]")
 const emptyState = document.querySelector("[data-empty-state]")

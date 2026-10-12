@@ -64,7 +64,7 @@ def cadastrar_novo_usuario():
     return render_template("cadastro.html")
 
 
-@app.route("/RedefinirSenha", methods=["GET", "POST"])
+@app.route("/redefinirSenha", methods=["GET", "POST"])
 def redefinir_senha():
     return render_template("redefinir_senha.html")
 
@@ -78,6 +78,11 @@ def especificacoes_tarefa():
 @app.route("/Home", methods=["GET", "POST"])
 def home():
     return render_template("home.html", usuario=USUARIO, contatos=CONTATOS, tarefas=TAREFAS)
+
+
+@app.route("/listarcontatos", methods=["GET", "POST"])
+def listar_contatos():
+    return render_template("listar_contatos.html", usuario=USUARIO, contatos=CONTATOS)
 
 
 if __name__ == "__main__":
