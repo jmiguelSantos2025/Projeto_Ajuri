@@ -1,7 +1,13 @@
 import os
+import sys
 import unicodedata
 from datetime import datetime, time, timezone
 from zoneinfo import ZoneInfo
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 from flask import Flask, render_template, redirect, request, flash, url_for, abort
 from flask_login import (login_user, logout_user, LoginManager,
                          current_user, login_required)
@@ -14,9 +20,23 @@ from database.models import (db, Usuario, Contato, Tarefa,
 
 load_dotenv()
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URI"]
+ROOT_DIR = os.path.dirname(BASE_DIR)
+PUBLIC_STATIC_DIR = os.path.join(ROOT_DIR, "public", "static")
+STATIC_DIR = PUBLIC_STATIC_DIR if os.path.isdir(PUBLIC_STATIC_DIR) else os.path.join(BASE_DIR, "static")
+
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="/static")
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+DATABASE_URI = os.environ.get("DATABASE_URI")
+if not SECRET_KEY or not DATABASE_URI:
+    raise RuntimeError(
+        "Defina as variáveis de ambiente SECRET_KEY e DATABASE_URI. "
+        "Localmente no arquivo .env; no Vercel em "
+        "Settings > Environment Variables."
+    )
+
+app.config["SECRET_KEY"] = SECRET_KEY
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_recycle": 280, "pool_pre_ping": True}
 
@@ -39,7 +59,10 @@ def carregar_usuario(id_user):
 
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as erro:
+        app.logger.warning("Não foi possível criar/verificar as tabelas: %s", erro)
 
 
 def mostrar_erros(erros):
