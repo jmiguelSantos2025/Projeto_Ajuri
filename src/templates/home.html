@@ -80,7 +80,7 @@
 
         <div class="task-meta task-owner">
           <span class="task-meta-label">Responsável</span>
-         <span class="task-meta-value">{{ t.responsavel.nome if t.responsavel else 'Sem responsável' }}</span>
+          <span class="task-meta-value">{{ t.contato or 'Sem responsável' }}</span>
         </div>
 
         <div class="task-status">{{ m.etiqueta_status(t.status) }}</div>

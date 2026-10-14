@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{# Layout das telas internas: barra do topo (logo, abas, usuário) + conteúdo #}
+{% block corpo %}
+{% set aba_contatos = request.path.lower() == '/listarcontatos' %}
+<main class="shell grid">
+  <header class="topbar grid">
+    <div class="brand-block block"><a class="logo" href="/home">&lt; Ajuri /&gt;</a></div>
+    <nav class="tabs" aria-label="Navegação principal">
+      <a class="tab" href="/home" {% if not aba_contatos %}aria-current="page"{% endif %}>Tarefas</a>
+      <a class="tab" href="/listarcontatos" {% if aba_contatos %}aria-current="page"{% endif %}>Contatos</a>
+    </nav>
+    <div class="user-block block">
+      <span class="user-name">{{ usuario.nome }}</span>
+      <button class="btn btn--secondary theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" aria-pressed="false">☾ Tema escuro</button>
+      <a class="btn btn--secondary" href="/login">Sair</a>
+    </div>
+  </header>
+
+  {% block conteudo %}{% endblock %}
+</main>
+
+{% block modais %}{% endblock %}
+{% endblock %}

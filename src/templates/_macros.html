@@ -1,0 +1,63 @@
+{# Textos, classes e pedaços de HTML usados em várias telas #}
+
+{% set STATUS = {
+  'A_FAZER':   {'slug': 'a-fazer',   'classe': 'todo',  'nome': 'A fazer'},
+  'FAZENDO':   {'slug': 'fazendo',   'classe': 'doing', 'nome': 'Fazendo'},
+  'CONCLUIDA': {'slug': 'concluida', 'classe': 'done',  'nome': 'Concluída'},
+  'ATRASADA':  {'slug': 'atrasada',  'classe': 'late',  'nome': 'Atrasada'}
+} %}
+
+{% set PRIORIDADES = {
+  'ALTA':  {'nome': 'Alta',  'classe': ' priority--high'},
+  'MEDIA': {'nome': 'Média', 'classe': ''},
+  'BAIXA': {'nome': 'Baixa', 'classe': ' priority--low'}
+} %}
+
+{# Etiqueta colorida de status #}
+{% macro etiqueta_status(status) -%}
+<span class="status status--{{ STATUS[status].classe }}">{{ STATUS[status].nome }}</span>
+{%- endmacro %}
+
+{# Mensagens de erro/sucesso enviadas pelo backend com flash() #}
+{% macro mensagens() -%}
+{% for categoria, texto in get_flashed_messages(with_categories=true) %}
+<div class="notice notice--{{ 'success' if categoria == 'sucesso' else 'error' }}" role="{{ 'status' if categoria == 'sucesso' else 'alert' }}">{{ texto }}</div>
+{% endfor %}
+{%- endmacro %}
+
+{# Campo de senha com botão Mostrar/Ocultar #}
+{% macro campo_senha(id, rotulo, autocomplete) -%}
+<div class="field">
+  <label for="{{ id }}">{{ rotulo }}</label>
+  <div class="password-wrap">
+    <input class="input" id="{{ id }}" name="{{ id }}" type="password" autocomplete="{{ autocomplete }}" required>
+    <button class="btn btn--text password-toggle" type="button" data-password-toggle="{{ id }}" aria-label="Mostrar senha">Mostrar</button>
+  </div>
+</div>
+{%- endmacro %}
+
+{# Iniciais do nome (Ana Clara Lima -> AL) #}
+{% macro iniciais(nome) -%}
+{%- set partes = nome.split() -%}
+{{- (partes[0][0] ~ (partes[-1][0] if partes|length > 1 else ''))|upper -}}
+{%- endmacro %}
+
+{# Opções dos campos de seleção #}
+{% macro opcoes_prioridade(atual='MEDIA') -%}
+{% for valor, info in PRIORIDADES.items() %}
+<option value="{{ valor }}" {{ 'selected' if valor == atual }}>{{ info.nome }}</option>
+{% endfor %}
+{%- endmacro %}
+
+{% macro opcoes_status(atual='A_FAZER') -%}
+{% for valor in ['A_FAZER', 'FAZENDO', 'CONCLUIDA'] %}
+<option value="{{ valor }}" {{ 'selected' if valor == atual }}>{{ STATUS[valor].nome }}</option>
+{% endfor %}
+{%- endmacro %}
+
+{% macro opcoes_contatos(contatos, atual=None) -%}
+<option value="">Sem responsável</option>
+{% for c in contatos %}
+<option value="{{ c.id_contato }}" {{ 'selected' if c.id_contato == atual }}>{{ c.nome }}</option>
+{% endfor %}
+{%- endmacro %}

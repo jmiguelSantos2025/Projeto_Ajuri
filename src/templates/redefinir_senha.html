@@ -1,0 +1,25 @@
+{% extends "base_auth.html" %}
+{% import "_macros.html" as m %}
+
+{% block titulo %}Redefinir senha — Ajuri{% endblock %}
+{% block eyebrow %}Recuperar acesso{% endblock %}
+{% block titulo_pagina %}Redefina sua <span class="editorial">senha.</span>{% endblock %}
+{% block intro %}Informe o e-mail cadastrado para receber as instruções.{% endblock %}
+
+{% block formulario %}
+<form method="post">
+  {{ m.mensagens() }}
+
+  <div class="field">
+    <label for="email">E-mail</label>
+    <input class="input" id="email" name="email" type="email" autocomplete="email" required>
+  </div>
+
+  <button class="btn btn--primary auth-submit" type="submit">Enviar e-mail</button>
+</form>
+{% endblock %}
+
+{% block rodape %}<a href="/login">Voltar para o login</a>{% endblock %}
+
+{% block painel_eyebrow %}Acesso seguro{% endblock %}
+{% block painel_titulo %}Você receberá um link válido por tempo limitado.{% endblock %}
