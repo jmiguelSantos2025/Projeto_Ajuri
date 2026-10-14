@@ -5,8 +5,8 @@ from flask_login import UserMixin
 
 db = SQLAlchemy()
 
-PRIORIDADES = ["baixa", "media", "alta"]
-STATUS_VALIDOS = ["a_fazer", "fazendo", "concluida"]
+PRIORIDADES = ["BAIXA", "MEDIA", "ALTA"]
+STATUS_VALIDOS = ["A_FAZER", "FAZENDO", "CONCLUIDA"]
 
 
 

@@ -117,3 +117,10 @@ document.querySelector("[data-cancel-save]")?.addEventListener("click", () => {
   const confirmation = document.querySelector("[data-save-confirmation]")
   if (confirmation) confirmation.hidden = true
 })
+document.querySelectorAll('form').forEach(function (form) {
+  form.addEventListener('submit', function () {
+    form.querySelectorAll('button[type="submit"]').forEach(function (botao) {
+      botao.disabled = true;
+    });
+  });
+});
