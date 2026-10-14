@@ -75,6 +75,23 @@ py src/app.py
 
 5. Abra no navegador: `http://127.0.0.1:5000`
 
+## Deploy no Vercel
+
+O projeto usa o preset de Flask do Vercel (zero-config). O Vercel detecta automaticamente o `app` em `src/app.py` e o executa como uma Vercel Function — não é usado o `app.run()`.
+
+1. Importe o repositório em [vercel.com/new](https://vercel.com/new).
+2. Em **Settings > Environment Variables**, cadastre as variáveis abaixo (para Production, Preview e Development):
+   - `DATABASE_URI` — string de conexão do PostgreSQL (Supabase). Use a URL do **Connection Pooler** e inclua `?sslmode=require`.
+   - `SECRET_KEY` — a mesma chave usada localmente.
+3. Faça o deploy. Em produção, o Vercel usa a branch `main`.
+
+Observações:
+
+- O `.env` está no `.gitignore` e **não** vai para o Vercel. Por isso as variáveis precisam ser cadastradas no painel.
+- Arquivos estáticos ficam em `public/static/`. O Vercel serve `public/**` pelo CDN e ignora o `static_folder` do Flask; mesmo assim o `url_for('static', ...)` continua gerando `/static/...`.
+- A versão do Python é definida em `.python-version`.
+
+
 ## Organização do trabalho
 
 Cada integrante ficou responsável por uma parte do projeto, conforme o cronograma da equipe.
