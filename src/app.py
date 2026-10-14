@@ -1,54 +1,38 @@
 from datetime import date
+from flask import Flask, render_template, redirect, request ,flash,url_for
+from flask_login import login_user, LoginManager, current_user, login_required
+from sqlalchemy.exc import IntegrityError
+import os
+from dotenv import load_dotenv
+from database.models import db, Usuario
 
-from flask import Flask, render_template, redirect
+## ler as variaveis de ambiente
+load_dotenv()
+
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URI"]
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# ---------------------------------------------------------------
-# Dados de exemplo, só para ver as telas funcionando.
-# O João troca por dados reais do banco (usuario, contato, tarefa).
-# ---------------------------------------------------------------
-USUARIO = {"nome": "Marina Souza", "email": "marina.souza@universidade.br"}
+db.init_app(app)
 
-CONTATOS = [
-    {"id_contato": 1, "nome": "Ana Clara Lima", "email": "ana.lima@universidade.br", "telefone": "(11) 98742-1308"},
-    {"id_contato": 2, "nome": "Rafael Nunes", "email": "rafael.nunes@universidade.br", "telefone": "(11) 99608-5421"},
-    {"id_contato": 3, "nome": "Beatriz Martins", "email": "bia.martins@universidade.br", "telefone": "(19) 98830-7714"},
-    {"id_contato": 4, "nome": "João Pedro Alves", "email": "joao.alves@universidade.br", "telefone": "(21) 99102-4436"},
-]
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+login_manager.login_message = "Faça login para acessar esta página"
+login_manager.login_message_category =  "erro"
 
-TAREFAS = [
-    {"id_tarefa": 1, "titulo": "Entregar relatório de Banco de Dados",
-     "descricao": "Consolidar consultas, modelo lógico e resultados dos testes.",
-     "data_final": date(2026, 10, 8), "prioridade": "ALTA", "status": "ATRASADA",
-     "id_contato": 1, "contato": "Ana Clara"},
-    {"id_tarefa": 2, "titulo": "Revisar diagrama de classes",
-     "descricao": "Validar associações e multiplicidades com a equipe.",
-     "data_final": date(2026, 10, 14), "prioridade": "MEDIA", "status": "FAZENDO",
-     "id_contato": 2, "contato": "Rafael Nunes"},
-    {"id_tarefa": 3, "titulo": "Marcar reunião com o orientador",
-     "descricao": "Alinhar o escopo da etapa final e os critérios de avaliação.",
-     "data_final": date(2026, 10, 17), "prioridade": "ALTA", "status": "A_FAZER",
-     "id_contato": None, "contato": "Marina Souza"},
-    {"id_tarefa": 4, "titulo": "Preparar roteiro da apresentação",
-     "descricao": "Distribuir falas e revisar a duração de cada seção.",
-     "data_final": date(2026, 10, 10), "prioridade": "MEDIA", "status": "CONCLUIDA",
-     "id_contato": 3, "contato": "Beatriz Martins"},
-    {"id_tarefa": 5, "titulo": "Testar fluxo de cadastro",
-     "descricao": "Cobrir validações de e-mail e confirmação de senha.",
-     "data_final": date(2026, 10, 20), "prioridade": "BAIXA", "status": "A_FAZER",
-     "id_contato": 4, "contato": "João Pedro"},
-    {"id_tarefa": 6, "titulo": "Documentar endpoints da API",
-     "descricao": "Registrar parâmetros, respostas e códigos de erro do projeto.",
-     "data_final": date(2026, 10, 22), "prioridade": "MEDIA", "status": "FAZENDO",
-     "id_contato": 2, "contato": "Rafael Nunes"},
-]
+@login_manager.user_loader
+def carregar_usuario(id_user):
+    return db.session.get(Usuario, int(id_user))
+
+with app.app_context():
+    db.create_all()
 
 
-# ---------------------------------------------------------------
-# Rotas temporárias: só mostram as telas.
-# Os formulários (POST) ainda não salvam nada.
-# ---------------------------------------------------------------
+
+
 @app.route("/")
 def index():
     return redirect("/login")
@@ -56,11 +40,89 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if(request.method == "POST"):
+        error = []
+        email = request.form.get("email", "").strip().lower()
+        senha = request.form.get("senha", "")
+
+        if not email:
+            error.append("Digite seu email")
+        if not senha:
+            error.append("Digite sua senha")
+
+        if not error:
+            usuario = Usuario.query.filter_by(email=email).first()
+
+            if(usuario is None or not usuario.verificar_senha(senha)):
+                error.append("Email ou senha invalidos")
+            else:
+                login_user(usuario)
+
+                proximo = request.args.get("next","")
+                if(proximo.startswith("/") and not proximo.startswith(("//", "/\\"))):
+                    return redirect(proximo)
+                return redirect(url_for("home"))
+
+        for erros in error:
+            flash("error: ", erros)
+
+
+        
+
+            
+            
+        
+            
+
     return render_template("login.html")
 
 
 @app.route("/cadastrarNovoUsuario", methods=["GET", "POST"])
 def cadastrar_novo_usuario():
+    if(request.method == "POST"):
+        nome = request.form.get("nome", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        senha = request.form.get("senha", "")
+        confirmar_senha = request.form.get("confirmar_senha", "")
+        erros = []
+
+        if not nome:
+            erros.append("Informe seu nome.")
+
+        if "@" not in email:
+            erros.append("Digite um email valido")
+        if(len(senha) < 8):
+            erros.append("Digite uma senha com mais de 7 caracteres")
+        if(senha != confirmar_senha):
+            erros.append("As senhas precisam ser iguais.")
+
+
+        if not erros:
+            existente = Usuario.query.filter_by(email=email).first()
+            if existente:
+                erros.append("Este email já está cadastrado")
+            else:
+                usuario = Usuario(nome=nome, email=email)
+                usuario.definir_senha(senha)
+
+                try:
+                    db.session.add(usuario)
+                    db.session.commit()
+                except IntegrityError:
+                    db.session.rollback()
+                    erros.append("Este e-mail já está cadastrado.")
+                else:
+                    flash("Conta criada com sucesso!")
+                    return redirect(url_for("login"))
+        for erro in erros:
+            flash("error: ", erro)
+
+
+
+
+        
+
+        
     return render_template("cadastro.html")
 
 
@@ -72,10 +134,11 @@ def redefinir_senha():
 @app.route("/especificacoesTarefas", methods=["GET", "POST"])
 def especificacoes_tarefa():
     return render_template("especificacoes_tarefa.html", usuario=USUARIO,
-                           contatos=CONTATOS, tarefa=TAREFAS[1])
+contatos=CONTATOS, tarefa=TAREFAS[1])
 
 
-@app.route("/home", methods=["GET", "POST"])
+@app.route("/home")
+@login_required()
 def home():
     return render_template("home.html", usuario=USUARIO, contatos=CONTATOS, tarefas=TAREFAS)
 

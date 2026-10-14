@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
 db = SQLAlchemy()
@@ -10,7 +11,7 @@ STATUS_VALIDOS = ["a_fazer", "fazendo", "concluida"]
 
 
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):
     id_user = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(150), nullable=False, unique=True)
@@ -22,6 +23,8 @@ class Usuario(db.Model):
         self.senha_hash = generate_password_hash(senha)
     def verificar_senha(self,senha):
         return check_password_hash(self.senha_hash,senha)
+    def get_id(self):
+        return str(self.id_user)
 class Contato(db.Model):
     id_contato = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_user = db.Column(db.Integer,db.ForeignKey("usuario.id_user"), nullable=False)
