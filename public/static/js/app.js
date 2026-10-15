@@ -117,6 +117,35 @@ document.querySelector("[data-cancel-save]")?.addEventListener("click", () => {
   const confirmation = document.querySelector("[data-save-confirmation]")
   if (confirmation) confirmation.hidden = true
 })
+// Token anti-CSRF das requisições feitas com fetch (rotas que só aceitam JSON)
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+
+// Iniciar / Concluir tarefa: envia JSON para /tarefas/<id>/status e recarrega
+// para a lista mostrar o novo status (inclusive "atrasada", calculado no servidor).
+document.querySelectorAll("[data-status-tarefa]").forEach((botao) => {
+  botao.addEventListener("click", async () => {
+    const id = botao.dataset.statusTarefa
+    const novoStatus = botao.dataset.novoStatus
+    botao.disabled = true
+    try {
+      const resposta = await fetch(`/tarefas/${id}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken || "",
+        },
+        body: JSON.stringify({ status: novoStatus }),
+      })
+      if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+      window.location.reload()
+    } catch (erro) {
+      console.error("Não foi possível mudar o status da tarefa.", erro)
+      botao.disabled = false
+      alert("Não foi possível atualizar o status. Recarregue a página e tente de novo.")
+    }
+  })
+})
+
 document.querySelectorAll('form').forEach(function (form) {
   form.addEventListener('submit', function () {
     form.querySelectorAll('button[type="submit"]').forEach(function (botao) {
