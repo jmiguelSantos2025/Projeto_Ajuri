@@ -1,3 +1,6 @@
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -7,6 +10,11 @@ db = SQLAlchemy()
 
 PRIORIDADES = ["BAIXA", "MEDIA", "ALTA"]
 STATUS_VALIDOS = ["A_FAZER", "FAZENDO", "CONCLUIDA"]
+
+# "atrasada" não é gravado no banco: é calculado na hora de exibir.
+# Comparamos datas no fuso do usuário para que uma tarefa com prazo
+# hoje só vire atrasada a partir do dia seguinte.
+FUSO = ZoneInfo("America/Manaus")
 
 
 
@@ -43,7 +51,22 @@ class Tarefa(db.Model):
     descricao = db.Column(db.Text)
     data_inicio = db.Column(db.DateTime(timezone=True), nullable=False)
     data_final = db.Column(db.DateTime(timezone=True), nullable=False)
-    prioridade = db.Column(db.String(10), nullable=False, default="media")
-    status = db.Column(db.String(15), nullable=False, default="a_fazer")
+    prioridade = db.Column(db.String(10), nullable=False, default="MEDIA")
+    status = db.Column(db.String(15), nullable=False, default="A_FAZER")
     responsavel = db.relationship("Contato", back_populates="tarefas")
     usuario_dono_tarefa = db.relationship("Usuario", back_populates="tarefas_listadas")
+
+    @property
+    def status_exibicao(self):
+        """Status só para exibir: acrescenta 'ATRASADA' sem gravar.
+
+        Considera atrasada a tarefa cujo prazo já passou (na data local)
+        e que ainda não foi concluída.
+        """
+        if self.status != "CONCLUIDA" and self.data_final:
+            prazo = self.data_final
+            if prazo.tzinfo is None:  # banco sem fuso: assume UTC
+                prazo = prazo.replace(tzinfo=timezone.utc)
+            if prazo.astimezone(FUSO).date() < datetime.now(FUSO).date():
+                return "ATRASADA"
+        return self.status

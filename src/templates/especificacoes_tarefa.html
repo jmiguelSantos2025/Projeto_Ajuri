@@ -15,6 +15,7 @@
 <div class="edit-layout grid">
   <section class="edit-form block">
     <form method="post" class="form-grid">
+      {{ m.csrf() }}
       <input type="hidden" name="acao" value="editar_tarefa">
       <input type="hidden" name="id_tarefa" value="{{ tarefa.id_tarefa or '' }}">
 
@@ -67,8 +68,8 @@
     <div>
       <p class="eyebrow">Estado atual</p>
       {% if tarefa.status %}
-      <h2>{{ m.STATUS[tarefa.status].nome }}</h2>
-      {{ m.etiqueta_status(tarefa.status) }}
+      <h2>{{ m.STATUS[tarefa.status_exibicao].nome }}</h2>
+      {{ m.etiqueta_status(tarefa.status_exibicao) }}
       {% endif %}
     </div>
     <p>Atrasos são calculados automaticamente a partir do prazo e não precisam ser selecionados.</p>

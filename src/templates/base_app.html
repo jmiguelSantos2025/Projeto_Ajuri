@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "_macros.html" as m %}
 
 {# Layout das telas internas: barra do topo (logo, abas, usuário) + conteúdo #}
 {% block corpo %}
@@ -13,9 +14,12 @@
     <div class="user-block block">
       <span class="user-name">{{ usuario.nome }}</span>
       <button class="btn btn--secondary theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" aria-pressed="false">☾ Tema escuro</button>
-      <a class="btn btn--secondary" href="/login">Sair</a>
+      <a class="btn btn--secondary" href="/logout">Sair</a>
     </div>
   </header>
+
+  {# Mensagens de flash precisam aparecer também nas telas internas #}
+  {{ m.mensagens() }}
 
   {% block conteudo %}{% endblock %}
 </main>

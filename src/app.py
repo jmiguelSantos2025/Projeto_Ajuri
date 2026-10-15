@@ -1,4 +1,5 @@
 import os
+import secrets
 import sys
 import unicodedata
 from datetime import datetime, time, timezone
@@ -8,7 +9,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from flask import Flask, render_template, redirect, request, flash, url_for, abort
+from flask import (Flask, render_template, redirect, request, flash, url_for,
+                   abort, session, jsonify)
 from flask_login import (login_user, logout_user, LoginManager,
                          current_user, login_required)
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
@@ -17,6 +19,7 @@ from sqlalchemy.orm import selectinload
 from dotenv import load_dotenv
 from database.models import (db, Usuario, Contato, Tarefa,
                              PRIORIDADES, STATUS_VALIDOS)
+from services.interpretar_tarefa import interpretar_tarefa
 
 load_dotenv()
 
@@ -58,6 +61,50 @@ def carregar_usuario(id_user):
     return db.session.get(Usuario, int(id_user))
 
 
+@app.before_request
+def garantir_token_csrf():
+    """Cria o token anti-falso-CSRF na sessão, se ainda não existir.
+
+    O token é gerado uma vez por sessão e só é lido depois; assim o
+    template consegue incluí-lo escondido em cada formulário.
+    """
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_urlsafe(32)
+
+
+def exigir_csrf():
+    """Confere o token do formulário contra o da sessão.
+
+    Devolve True se o POST for legítimo; caso contrário exibe o aviso,
+    redireciona de volta e devolve False. Só é chamada nas rotas que
+    aceitam formulário — as rotas JSON usam o header X-CSRF-Token.
+    """
+    esperado = session.get("csrf_token", "")
+    if request.form.get("csrf_token", "") == esperado and esperado:
+        return True
+    flash("Sessão expirada. Recarregue a página e tente de novo.", "erro")
+    return False
+
+
+def csrf_json_valido():
+    """Versão do CSRF para requisições JSON feitas com fetch.
+
+    O token vai no header X-CSRF-Token (o JavaScript lê da meta tag),
+    porque corpos JSON não carregam campos de formulário.
+    """
+    esperado = session.get("csrf_token", "")
+    return bool(esperado) and request.headers.get("X-CSRF-Token", "") == esperado
+
+
+def data_local(momento):
+    """Data (sem hora) no fuso do usuário, usada nas comparações de prazo."""
+    if momento is None:
+        return None
+    if momento.tzinfo is None:  # banco sem fuso: assume UTC
+        momento = momento.replace(tzinfo=timezone.utc)
+    return momento.astimezone(FUSO).date()
+
+
 with app.app_context():
     try:
         db.create_all()
@@ -97,6 +144,9 @@ def ler_dados_tarefa():
 
     if not titulo:
         erros.append("Informe o título da tarefa.")
+    elif len(titulo) > 150:
+        # A coluna do banco aceita até 150 caracteres; barramos antes.
+        erros.append("O título pode ter no máximo 150 caracteres.")
     if prioridade not in PRIORIDADES:
         erros.append("Prioridade inválida.")
     if status not in STATUS_VALIDOS:
@@ -145,26 +195,41 @@ def criar_contato():
         if ja_existe:
             erros.append("Você já tem um contato com esse email.")
         else:
-            db.session.add(Contato(id_user=current_user.id_user, nome=nome,
-                                   email=email, telefone=telefone))
-            db.session.commit()
-            flash("Contato adicionado!", "sucesso")
+            try:
+                db.session.add(Contato(id_user=current_user.id_user, nome=nome,
+                                       email=email, telefone=telefone))
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                app.logger.exception("Falha ao criar contato do usuário %s",
+                                     current_user.id_user)
+                erros.append("Não foi possível adicionar o contato. Tente de novo.")
+            else:
+                flash("Contato adicionado!", "sucesso")
     return erros
 
 
 def criar_tarefa():
     dados, erros = ler_dados_tarefa()
     agora = datetime.now(timezone.utc)
-    hoje = datetime.now(FUSO).date()
 
-    if dados["data_final"] and dados["data_final"].date() < hoje:
+    # Prazo não pode ser anterior ao início nem a hoje
+    # (comparação por data local, em Manaus).
+    if dados["data_final"] and data_local(dados["data_final"]) < data_local(agora):
         erros.append("O prazo não pode ser anterior a hoje.")
 
     if not erros:
-        db.session.add(Tarefa(id_user=current_user.id_user,
-                              data_inicio=agora, **dados))
-        db.session.commit()
-        flash("Tarefa criada!", "sucesso")
+        try:
+            db.session.add(Tarefa(id_user=current_user.id_user,
+                                  data_inicio=agora, **dados))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            app.logger.exception("Falha ao criar tarefa do usuário %s",
+                                 current_user.id_user)
+            erros.append("Não foi possível salvar a tarefa. Tente de novo.")
+        else:
+            flash("Tarefa criada!", "sucesso")
     return erros
 
 
@@ -172,8 +237,13 @@ def excluir_tarefa():
     tarefa = buscar_tarefa_do_usuario(request.form.get("id_tarefa", type=int))
     if tarefa is None:
         return ["Tarefa não encontrada."]
-    db.session.delete(tarefa)
-    db.session.commit()
+    try:
+        db.session.delete(tarefa)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Falha ao excluir a tarefa %s", tarefa.id_tarefa)
+        return ["Não foi possível excluir a tarefa. Tente de novo."]
     flash("Tarefa excluída.", "sucesso")
     return []
 
@@ -188,6 +258,8 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+        if not exigir_csrf():
+            return redirect(url_for("login"))
         erros = []
         email = request.form.get("email", "").strip().lower()
         senha = request.form.get("senha", "")
@@ -225,6 +297,8 @@ def logout():
 @app.route("/cadastrarNovoUsuario", methods=["GET", "POST"])
 def cadastrar_novo_usuario():
     if request.method == "POST":
+        if not exigir_csrf():
+            return redirect(url_for("cadastrar_novo_usuario"))
         nome = request.form.get("nome", "").strip()
         email = request.form.get("email", "").strip().lower()
         senha = request.form.get("senha", "")
@@ -263,6 +337,8 @@ def cadastrar_novo_usuario():
 @app.route("/redefinirSenha", methods=["GET", "POST"])
 def redefinir_senha():
     if request.method == "POST":
+        if not exigir_csrf():
+            return redirect(url_for("redefinir_senha"))
         email = request.form.get("email", "").strip().lower()
         usuario = Usuario.query.filter_by(email=email).first() if email else None
 
@@ -296,6 +372,8 @@ def nova_senha(token):
         return redirect(url_for("redefinir_senha"))
 
     if request.method == "POST":
+        if not exigir_csrf():
+            return redirect(url_for("nova_senha", token=token))
         senha = request.form.get("senha", "")
         confirmar = request.form.get("confirmar_senha", "")
         erros = validar_senha_nova(senha, confirmar)
@@ -316,8 +394,8 @@ def nova_senha(token):
 @login_required
 def home():
     if request.method == "POST":
-        print(">>> POST /home:", dict(request.form), flush=True)
-       
+        if not exigir_csrf():
+            return redirect(url_for("home"))
         acao = request.form.get("acao", "")
 
         if acao == "nova_tarefa":
@@ -328,7 +406,6 @@ def home():
             erros = criar_contato()
         else:
             erros = ["Ação inválida."]
-        print(">>> ERROS:", erros, flush=True)
         mostrar_erros(erros)
         return redirect(url_for("home"))
 
@@ -340,26 +417,74 @@ def home():
     contatos = Contato.query.filter_by(id_user=current_user.id_user).all()
     return render_template("home.html", usuario=current_user,
                            contatos=contatos, tarefas=tarefas)
+
+
 @app.route("/tarefas/<int:id_tarefa>/status", methods=["POST"])
 @login_required
 def mudar_status(id_tarefa):
+    """Muda o status de uma tarefa. Chamada pelo app.js com fetch + JSON.
+
+    Como não é formulário, o token CSRF viaja no header X-CSRF-Token e
+    a resposta também é JSON (sem redirect).
+    """
+    if not request.is_json:
+        return jsonify(erro="Envie a requisição em JSON."), 400
+    if not csrf_json_valido():
+        return jsonify(erro="Sessão expirada. Recarregue a página."), 403
+
+    novo_status = normalizar((request.get_json(silent=True) or {}).get("status", ""))
     tarefa = buscar_tarefa_do_usuario(id_tarefa)
-    novo_status = normalizar(request.form.get("status", ""))
 
     if tarefa is None:
-        flash("Tarefa não encontrada.", "erro")
-    elif novo_status not in STATUS_VALIDOS:
-        flash("Status inválido.", "erro")
-    else:
+        return jsonify(erro="Tarefa não encontrada."), 404
+    if novo_status not in STATUS_VALIDOS:
+        return jsonify(erro="Status inválido."), 400
+
+    try:
         tarefa.status = novo_status
         db.session.commit()
-    return redirect(url_for("home"))
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Falha ao mudar status da tarefa %s", id_tarefa)
+        return jsonify(erro="Não foi possível atualizar o status."), 500
+
+    return jsonify(id_tarefa=tarefa.id_tarefa, status=tarefa.status)
+
+
+@app.route("/api/tarefas/interpretar", methods=["POST"])
+@login_required
+def api_interpretar_tarefa():
+    """Sugere campos de tarefa a partir de um texto falado/escrevido.
+
+    Só devolve a sugestão: nada é gravado. O formulário continua sendo
+    o responsável por salvar, passando pelas validações de sempre.
+    """
+    if not request.is_json:
+        return jsonify(erro="Envie a requisição em JSON."), 400
+    if not csrf_json_valido():
+        return jsonify(erro="Sessão expirada. Recarregue a página."), 403
+
+    texto = ((request.get_json(silent=True) or {}).get("texto") or "").strip()
+    if not texto:
+        return jsonify(erro="Envie o texto que você falou."), 400
+    if len(texto) > 500:
+        return jsonify(erro="Texto longo demais: máximo de 500 caracteres."), 400
+
+    contatos = Contato.query.filter_by(id_user=current_user.id_user).all()
+    try:
+        sugestao = interpretar_tarefa(texto, contatos)
+    except Exception:
+        app.logger.exception("Falha ao interpretar texto de tarefa")
+        return jsonify(erro="Não consegui interpretar esse texto."), 500
+    return jsonify(sugestao)
 
 
 @app.route("/listarcontatos", methods=["GET", "POST"])
 @login_required
 def listar_contatos():
     if request.method == "POST":
+        if not exigir_csrf():
+            return redirect(url_for("listar_contatos"))
         if request.form.get("acao", "") == "novo_contato":
             erros = criar_contato()
         else:
@@ -380,17 +505,25 @@ def especificacoes_tarefa():
         abort(404)
 
     if request.method == "POST":
+        if not exigir_csrf():
+            return redirect(url_for("especificacoes_tarefa", id=id_tarefa))
         dados, erros = ler_dados_tarefa()
 
-        if dados["data_final"] and dados["data_final"].date() < tarefa.data_inicio.date():
+        if dados["data_final"] and data_local(dados["data_final"]) < data_local(tarefa.data_inicio):
             erros.append("O prazo não pode ser anterior ao início da tarefa.")
 
         if not erros:
-            for campo, valor in dados.items():
-                setattr(tarefa, campo, valor)
-            db.session.commit()
-            flash("Tarefa atualizada!", "sucesso")
-            return redirect(url_for("home"))
+            try:
+                for campo, valor in dados.items():
+                    setattr(tarefa, campo, valor)
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                app.logger.exception("Falha ao atualizar a tarefa %s", id_tarefa)
+                erros.append("Não foi possível salvar as alterações. Tente de novo.")
+            else:
+                flash("Tarefa atualizada!", "sucesso")
+                return redirect(url_for("home"))
 
         mostrar_erros(erros)
 

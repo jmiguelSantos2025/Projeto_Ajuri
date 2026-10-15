@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {# Token anti-CSRF lido pelo JavaScript em requisições feitas com fetch #}
+  <meta name="csrf-token" content="{{ session.csrf_token }}">
   <title>{% block titulo %}Ajuri{% endblock %}</title>
   <script>
     try {
@@ -18,5 +20,7 @@
 <body>
   {% block corpo %}{% endblock %}
   <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {# Scripts extras de cada página (ex.: voz.js na Home) #}
+  {% block scripts %}{% endblock %}
 </body>
 </html>

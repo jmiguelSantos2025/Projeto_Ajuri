@@ -25,6 +25,11 @@
 {% endfor %}
 {%- endmacro %}
 
+{# Campo escondido com o token anti-CSRF (criado na sessão pelo app.py) #}
+{% macro csrf() -%}
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+{%- endmacro %}
+
 {# Campo de senha com botão Mostrar/Ocultar #}
 {% macro campo_senha(id, rotulo, autocomplete) -%}
 <div class="field">

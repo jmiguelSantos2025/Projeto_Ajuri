@@ -1,0 +1,26 @@
+{% extends "base_auth.html" %}
+{% import "_macros.html" as m %}
+
+{% block titulo %}Nova senha — Ajuri{% endblock %}
+{% block eyebrow %}Definir nova senha{% endblock %}
+{% block titulo_pagina %}Escolha uma nova <span class="editorial">senha.</span>{% endblock %}
+{% block intro %}Digite e confirme a nova senha da sua conta.{% endblock %}
+
+{% block formulario %}
+<form method="post">
+  {{ m.mensagens() }}
+  {{ m.csrf() }}
+
+  <div class="form-grid">
+    {{ m.campo_senha('senha', 'Nova senha', 'new-password') }}
+    {{ m.campo_senha('confirmar_senha', 'Confirmar senha', 'new-password') }}
+  </div>
+
+  <button class="btn btn--primary auth-submit" type="submit">Salvar nova senha</button>
+</form>
+{% endblock %}
+
+{% block rodape %}<a href="/login">Voltar para o login</a>{% endblock %}
+
+{% block painel_eyebrow %}Acesso seguro{% endblock %}
+{% block painel_titulo %}Sua nova senha vale a partir do próximo login.{% endblock %}
