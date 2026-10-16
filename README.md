@@ -112,10 +112,6 @@ Cada integrante ficou responsável por uma parte do projeto, conforme o cronogra
 | 4 | 14/10/2026 a 16/10/2026 | Média |
 | 5 | 17/10/2026 a 19/10/2026 | Baixa |
 
-## Fluxo de trabalho com branches
-
-> A definir conforme as instruções do repositório.
-
 ## Equipe
 
 - João Miguel (Back-End)
