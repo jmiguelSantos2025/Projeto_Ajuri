@@ -1,5 +1,5 @@
 # Ajuri - Gerenciador de Tarefas
-;
+
 Aplicação web de gerenciamento de tarefas desenvolvida em grupo, em Python com Flask, como projeto acadêmico do curso de Sistemas de Informação (UEA).
 
 O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e acompanhar o andamento de cada uma por status e cor.
