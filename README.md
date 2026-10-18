@@ -115,3 +115,4 @@ Cada integrante ficou responsável por uma parte do projeto, conforme o cronogra
 - João Miguel (Back-End)
 - Gabriel(Front-End)
 - Nicole(Front-End)
+.
