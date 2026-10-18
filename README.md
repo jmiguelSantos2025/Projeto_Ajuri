@@ -45,8 +45,6 @@ O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e
 
 ## Como executar o projeto
 
-> Os comandos abaixo serão atualizados quando a estrutura inicial do Flask estiver pronta.
-
 1. Clone o repositório:
 
 ```bash
