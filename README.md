@@ -4,6 +4,12 @@ Aplicação web de gerenciamento de tarefas em grupo, feita com **Python e Flask
 
 Projeto acadêmico desenvolvido em equipe, com versionamento no GitHub.
 
+# Acessar o sistema
+
+https://projetoajuri.vercel.app/login
+
+Não é preciso instalar nada. Abra o link, clique em Criar conta e comece a usar.
+
 ## Funcionalidades
 
 - **Autenticação:** cadastro, login, logout e redefinição de senha por link com validade de 1 hora.
@@ -22,7 +28,7 @@ Projeto acadêmico desenvolvido em equipe, com versionamento no GitHub.
 |---|---|
 | `/login` | Entrar no sistema |
 | `/cadastrarNovoUsuario` | Criar conta |
-| `/RedefinirSenha` | Pedir link de redefinição de senha |
+| `/redefinirSenha` | Pedir link de redefinição de senha |
 | `/novaSenha` | Definir a nova senha pelo link recebido |
 | `/home` | Lista de tarefas, contatos e janelas de criação e exclusão |
 | `/especificacoesTarefas` | Editar uma tarefa |
@@ -48,125 +54,88 @@ Projeto acadêmico desenvolvido em equipe, com versionamento no GitHub.
 - Vercel (deploy)
 - GitHub e VS Code
 
+ 
+# Para quem vai desenvolver
+ 
+Esta parte é só para quem for rodar o código no próprio computador. Para apenas usar o sistema, o link do início é suficiente.
+ 
 ## Pré-requisitos
-
-- **Python 3.10 ou superior**
-- **Git**
-- Acesso ao banco de dados do projeto (as credenciais ficam no arquivo `.env`, veja a seção de configuração)
-
-Confira a versão instalada:
-
-| Sistema | Comando |
-|---|---|
-| Windows | `py --version` |
-| Linux e macOS | `python3 --version` |
-
-## Como rodar o projeto
-
-Escolha o seu sistema operacional. Todos os comandos são executados no terminal, dentro da pasta do projeto.
-
-### 1. Baixar o projeto
-
-Igual em todos os sistemas:
-
+ 
+- Python 3.12 ou superior (a versão do projeto está no arquivo `.python-version`)
+- Git
+- Os valores de `SECRET_KEY` e `DATABASE_URI`, que o João passa aos integrantes do grupo (não ficam no GitHub)
+## Rodar localmente
+ 
+**1. Baixar o projeto**
+ 
 ```bash
 git clone https://github.com/jmiguelSantos2025/Projeto_Ajuri.git
 cd Projeto_Ajuri
 ```
-
-### 2. Criar e ativar o ambiente virtual
-
-O ambiente virtual isola as bibliotecas do projeto, para não misturar com as de outros projetos.
-
-**Windows (PowerShell):**
-
+ 
+**2. Criar e ativar o ambiente virtual**
+ 
+Windows (PowerShell):
+ 
 ```powershell
 py -m venv venv
 venv\Scripts\activate
 ```
-
-Se aparecer o erro "a execução de scripts foi desabilitada neste sistema", rode o comando abaixo e ative de novo:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
-venv\Scripts\activate
-```
-
-**Windows (Prompt de Comando, cmd):**
-
-```bat
-py -m venv venv
-venv\Scripts\activate.bat
-```
-
-**Linux e macOS (bash ou zsh):**
-
+ 
+Se o PowerShell bloquear a ativação, rode antes `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`.
+ 
+Linux e macOS:
+ 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
-
-Em Ubuntu e Debian, se aparecer o erro `ensurepip is not available` ou `No module named venv`, instale o pacote que falta e repita o comando:
-
-```bash
-sudo apt update
-sudo apt install python3-venv python3-pip
-```
-
-Quando o ambiente estiver ativo, o terminal mostra `(venv)` no começo da linha.
-
-### 3. Instalar as dependências
-
-Com o `(venv)` ativo, o comando é o mesmo em todos os sistemas:
-
+ 
+No Ubuntu/Debian, se faltar o módulo `venv`: `sudo apt install python3-venv python3-pip`.
+ 
+Quando o ambiente estiver ativo, aparece `(venv)` no início da linha do terminal.
+ 
+**3. Instalar as dependências** (todos os sistemas)
+ 
 ```bash
 pip install -r requirements.txt
 ```
-
-### 4. Executar a aplicação
-
-**Windows:**
-
+ 
+**4. Criar o arquivo `.env`** na raiz do projeto, com este conteúdo:
+ 
+```
+SECRET_KEY=uma-chave-secreta-longa
+DATABASE_URI=postgresql://usuario:senha@host:5432/banco
+```
+ 
+Use os valores combinados com o grupo. Nunca envie o `.env` para o GitHub.
+ 
+**5. Executar**
+ 
+Windows:
+ 
 ```powershell
 py src/app.py
 ```
-
-**Linux e macOS:**
-
+ 
+Linux e macOS:
+ 
 ```bash
 python3 src/app.py
 ```
-
-Abra no navegador: <http://127.0.0.1:5000/login>
-
-Para parar o servidor, use `Ctrl + C` no terminal.
-
-### 5. Desativar o ambiente virtual
-
-Igual em todos os sistemas:
-
-```bash
-deactivate
-```
-
-## Como rodar os testes
-
+ 
+Abra <http://127.0.0.1:5000/login>. Para parar, use `Ctrl + C`.
+ 
+## Testes
+ 
 Com o ambiente virtual ativo:
-
-**Windows:**
-
-```powershell
-py -m pytest -q
-```
-
-**Linux e macOS:**
-
+ 
 ```bash
-python3 -m pytest -q
+python -m pytest -q
 ```
-
-Os testes automáticos cobrem a interpretação da tarefa por voz. As demais telas devem ser conferidas manualmente no navegador.
-
+ 
+Os testes automáticos cobrem a interpretação da tarefa por voz.
+ 
 ## Problemas comuns
 
 | Problema | O que fazer |
