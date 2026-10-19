@@ -123,33 +123,7 @@ Com o `(venv)` ativo, o comando é o mesmo em todos os sistemas:
 pip install -r requirements.txt
 ```
 
-### 4. Configurar as variáveis de ambiente
-
-As credenciais do banco e a chave secreta do Flask **não vão para o GitHub**. Crie um arquivo chamado `.env` na raiz do projeto, com os valores combinados com o grupo (peça ao João).
-
-**Windows:**
-
-```powershell
-New-Item .env -ItemType File
-```
-
-**Linux e macOS:**
-
-```bash
-touch .env
-```
-
-Abra o arquivo no VS Code e preencha. O exemplo abaixo mostra o formato; use os **mesmos nomes de variáveis que o código lê** (veja em `src/`):
-
-```
-# Exemplo de formato. Ajuste os nomes e valores conforme o projeto.
-DATABASE_URL=postgresql://usuario:senha@host:5432/banco
-SECRET_KEY=uma-chave-secreta-longa
-```
-
-> Nunca envie o `.env` para o GitHub. Ele já deve estar no `.gitignore`.
-
-### 5. Executar a aplicação
+### 4. Executar a aplicação
 
 **Windows:**
 
@@ -167,7 +141,7 @@ Abra no navegador: <http://127.0.0.1:5000/login>
 
 Para parar o servidor, use `Ctrl + C` no terminal.
 
-### 6. Desativar o ambiente virtual
+### 5. Desativar o ambiente virtual
 
 Igual em todos os sistemas:
 
