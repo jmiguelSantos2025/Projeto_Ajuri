@@ -1,118 +1,269 @@
-# Ajuri - Gerenciador de Tarefas
+# Ajuri — Gerenciador de Tarefas
 
-Aplicação web de gerenciamento de tarefas desenvolvida em grupo, em Python com Flask, como projeto acadêmico do curso de Sistemas de Informação (UEA).
+Aplicação web de gerenciamento de tarefas em grupo, feita com **Python e Flask**. O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato responsável e acompanhar o andamento por status coloridos.
 
-O sistema permite cadastrar contatos, criar tarefas, atribuí-las a um contato e acompanhar o andamento de cada uma por status e cor.
+Projeto acadêmico desenvolvido em equipe, com versionamento no GitHub.
 
-## Principais funcionalidades
+## Funcionalidades
 
-- Cadastro de usuário, login e redefinição de senha
-- Lista de contatos
-- Criação de tarefas com **descrição**, **prazo**, **prioridade**, **status** e **responsável** (um contato)
-- Edição e exclusão de tarefas
-- Tela com todas as tarefas e seus respectivos responsáveis
-- Quatro status, cada um com uma cor diferente em todas as telas:
-  - A fazer
-  - Fazendo
-  - Concluída
-  - Atrasada (prazo vencido e tarefa ainda não concluída)
+- **Autenticação:** cadastro, login, logout e redefinição de senha por link com validade de 1 hora.
+- **Tarefas:** criar, editar, iniciar, concluir e excluir. Cada tarefa tem título, descrição, prazo, prioridade, status e responsável.
+- **Contatos:** cadastrar e listar contatos (nome, e-mail e telefone). Cada tarefa é atribuída a um contato.
+- **Status com cores:** A fazer, Fazendo, Concluída e Atrasada, com a mesma cor em todas as telas.
+- **Atraso automático:** uma tarefa é "Atrasada" quando o prazo venceu e ela não está concluída. Esse status é calculado na exibição (fuso de Manaus) e não é gravado no banco.
+- **Busca e filtros:** busca por texto e filtro por status na tela principal.
+- **Tarefa por voz:** a pessoa fala a tarefa em português e o sistema sugere título, prazo, prioridade e responsável. Os dados são conferidos antes de salvar. Depende do suporte a reconhecimento de voz do navegador.
+- **Segurança:** senhas com hash, proteção contra CSRF e dados separados por usuário.
+- **Interface:** layout responsivo, com tema claro e escuro.
 
-## Rotas
+## Telas e rotas
 
-| Rota |
-|---|
-| `/login` |
-| `/cadastrarNovoUsuario` |
-| `/RedefinirSenha` |
-| `/Home` |
-| `/especificacoesTarefas` |
-| `/listarcontatos` |
+| Rota | Tela |
+|---|---|
+| `/login` | Entrar no sistema |
+| `/cadastrarNovoUsuario` | Criar conta |
+| `/RedefinirSenha` | Pedir link de redefinição de senha |
+| `/novaSenha` | Definir a nova senha pelo link recebido |
+| `/Home` | Lista de tarefas, contatos e janelas de criação e exclusão |
+| `/especificacoesTarefas` | Editar uma tarefa |
+| `/listarcontatos` | Lista de contatos |
+| `/logout` | Sair |
 
-## Fluxo do sistema
+> As rotas diferenciam maiúsculas de minúsculas. Use os nomes exatamente como estão na tabela.
 
-<img width="680" height="930" alt="DIAGRAMA DE ATIVIDADES" src="https://github.com/user-attachments/assets/cd20d43e-3cd2-437d-a494-247c8d29bd3e" />
+## Valores de status e prioridade
 
+| Campo | Valores |
+|---|---|
+| Status | `A_FAZER`, `FAZENDO`, `CONCLUIDA` e `ATRASADA` (calculada pelo prazo) |
+| Prioridade | `ALTA`, `MEDIA` e `BAIXA` |
+
+## Fluxo da aplicação
+
+![Diagrama de atividades](docs/diagrama-de-atividades.png)
 
 ## Tecnologias
 
-- Python
-- Flask
+- Python e Flask
 - SQLAlchemy
-- Supabase + PostgreSQL
-- GitHub (versionamento)
+- PostgreSQL no Supabase
+- HTML, CSS e JavaScript simples
 - Vercel (deploy)
-- VS Code (IDE)
+- GitHub e VS Code
 
-## Como executar o projeto
+## Pré-requisitos
 
-1. Clone o repositório:
+- **Python 3.10 ou superior**
+- **Git**
+- Acesso ao banco de dados do projeto (as credenciais ficam no arquivo `.env`, veja a seção de configuração)
+
+Confira a versão instalada:
+
+| Sistema | Comando |
+|---|---|
+| Windows | `py --version` |
+| Linux e macOS | `python3 --version` |
+
+## Como rodar o projeto
+
+Escolha o seu sistema operacional. Todos os comandos são executados no terminal, dentro da pasta do projeto.
+
+### 1. Baixar o projeto
+
+Igual em todos os sistemas:
 
 ```bash
-git clone https://github.com/jmiguelSantos2025/Projeto_Ajuri
+git clone https://github.com/jmiguelSantos2025/Projeto_Ajuri.git
 cd Projeto_Ajuri
 ```
 
-2. Crie e ative o ambiente virtual (Windows):
+### 2. Criar e ativar o ambiente virtual
 
-```bash
+O ambiente virtual isola as bibliotecas do projeto, para não misturar com as de outros projetos.
+
+**Windows (PowerShell):**
+
+```powershell
 py -m venv venv
 venv\Scripts\activate
 ```
 
-3. Instale as dependências:
+Se aparecer o erro "a execução de scripts foi desabilitada neste sistema", rode o comando abaixo e ative de novo:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+venv\Scripts\activate
+```
+
+**Windows (Prompt de Comando, cmd):**
+
+```bat
+py -m venv venv
+venv\Scripts\activate.bat
+```
+
+**Linux e macOS (bash ou zsh):**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Em Ubuntu e Debian, se aparecer o erro `ensurepip is not available` ou `No module named venv`, instale o pacote que falta e repita o comando:
+
+```bash
+sudo apt update
+sudo apt install python3-venv python3-pip
+```
+
+Quando o ambiente estiver ativo, o terminal mostra `(venv)` no começo da linha.
+
+### 3. Instalar as dependências
+
+Com o `(venv)` ativo, o comando é o mesmo em todos os sistemas:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Execute a aplicação:
+### 4. Configurar as variáveis de ambiente
+
+As credenciais do banco e a chave secreta do Flask **não vão para o GitHub**. Crie um arquivo chamado `.env` na raiz do projeto, com os valores combinados com o grupo (peça ao João).
+
+**Windows:**
+
+```powershell
+New-Item .env -ItemType File
+```
+
+**Linux e macOS:**
 
 ```bash
+touch .env
+```
+
+Abra o arquivo no VS Code e preencha. O exemplo abaixo mostra o formato; use os **mesmos nomes de variáveis que o código lê** (veja em `src/`):
+
+```
+# Exemplo de formato. Ajuste os nomes e valores conforme o projeto.
+DATABASE_URL=postgresql://usuario:senha@host:5432/banco
+SECRET_KEY=uma-chave-secreta-longa
+```
+
+> Nunca envie o `.env` para o GitHub. Ele já deve estar no `.gitignore`.
+
+### 5. Executar a aplicação
+
+**Windows:**
+
+```powershell
 py src/app.py
 ```
 
-5. Abra no navegador: `http://127.0.0.1:5000`
+**Linux e macOS:**
 
-## Deploy no Vercel
+```bash
+python3 src/app.py
+```
 
-O projeto usa o preset de Flask do Vercel (zero-config). O Vercel detecta automaticamente o `app` em `src/app.py` e o executa como uma Vercel Function — não é usado o `app.run()`.
+Abra no navegador: <http://127.0.0.1:5000/login>
 
-1. Importe o repositório em [vercel.com/new](https://vercel.com/new).
-2. Em **Settings > Environment Variables**, cadastre as variáveis abaixo (para Production, Preview e Development):
-   - `DATABASE_URI` — string de conexão do PostgreSQL (Supabase). Use a URL do **Connection Pooler** e inclua `?sslmode=require`.
-   - `SECRET_KEY` — a mesma chave usada localmente.
-3. Faça o deploy. Em produção, o Vercel usa a branch `main`.
+Para parar o servidor, use `Ctrl + C` no terminal.
 
-Observações:
+### 6. Desativar o ambiente virtual
 
-- O `.env` está no `.gitignore` e **não** vai para o Vercel. Por isso as variáveis precisam ser cadastradas no painel.
-- Arquivos estáticos ficam em `public/static/`. O Vercel serve `public/**` pelo CDN e ignora o `static_folder` do Flask; mesmo assim o `url_for('static', ...)` continua gerando `/static/...`.
-- A versão do Python é definida em `.python-version`.
+Igual em todos os sistemas:
 
+```bash
+deactivate
+```
 
-## Organização do trabalho
+## Como rodar os testes
 
-Cada integrante ficou responsável por uma parte do projeto, conforme o cronograma da equipe.
+Com o ambiente virtual ativo:
+
+**Windows:**
+
+```powershell
+py -m pytest -q
+```
+
+**Linux e macOS:**
+
+```bash
+python3 -m pytest -q
+```
+
+Os testes automáticos cobrem a interpretação da tarefa por voz. As demais telas devem ser conferidas manualmente no navegador.
+
+## Problemas comuns
+
+| Problema | O que fazer |
+|---|---|
+| `python3: command not found` (Linux/macOS) | Instale o Python 3 pelo gerenciador de pacotes do sistema (por exemplo, `sudo apt install python3`). |
+| `py` não é reconhecido (Windows) | Reinstale o Python em python.org marcando a opção **Add Python to PATH**. |
+| `ModuleNotFoundError` | O ambiente virtual não está ativo ou as dependências não foram instaladas. Ative o `venv` e rode `pip install -r requirements.txt`. |
+| Erro ao conectar no banco | Confira o `.env` e a conexão com a internet. |
+| `Address already in use` (porta 5000 ocupada) | Feche o outro programa que usa a porta 5000 ou reinicie o terminal. |
+| O visual não atualizou | Aperte `Ctrl + F5` no navegador para limpar o cache. |
+| A tarefa por voz não funciona | Use um navegador com suporte a reconhecimento de voz e permita o uso do microfone. |
+| Redefinição de senha: não chegou e-mail | O sistema gera o link de redefinição, mas não envia e-mail. Veja a observação abaixo. |
+
+> **Observação:** a redefinição de senha gera um link com validade de 1 hora, que fica registrado no log do servidor. O envio por e-mail ainda não está implementado.
+
+## Estrutura do projeto
+
+```
+Projeto_Ajuri/
+├── docs/                 # diagramas, levantamento das telas e imagens de referência
+├── src/
+│   ├── app.py            # aplicação Flask e rotas
+│   ├── templates/        # páginas HTML (Jinja)
+│   └── static/           # CSS e JavaScript
+├── requirements.txt      # bibliotecas do projeto
+└── README.md
+```
+
+> Confira a estrutura real no repositório e acrescente as pastas que faltarem (modelos, serviços e testes).
+
+## Fluxo de trabalho no GitHub
+
+1. Nunca faça commit direto na `main`. Trabalhe na sua branch.
+2. Para trazer o que já entrou na `main` para a sua branch:
+
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout nome-da-sua-branch
+   git merge main
+   ```
+
+3. Salve o seu trabalho:
+
+   ```bash
+   git add .
+   git commit -m "Descreva o que foi feito"
+   git push
+   ```
+
+4. Abra um Pull Request da sua branch para a `main` e peça a revisão de outro integrante. A merge só acontece depois da revisão.
+
+## Divisão de responsabilidades
+
+Baseada no cronograma do grupo (planejamento AJURI).
 
 | Integrante | Responsabilidades |
 |---|---|
-| João Miguel | Cronograma, divisão de atividades, repositório, requisitos, definição de stack, modelagem e configuração do banco (Supabase + SQLAlchemy), `models.py`, rotas e lógica do backend, deploy e testes |
-| Gabriel | Diagrama de fluxo de telas, estrutura de pastas, telas `/home` e `/listarContatos` |
-| Nicole | Diagrama de atividades, README, levantamento das telas, estrutura inicial do Flask, telas `/login`, `/especificacoesTarefa` e `/cadastrarNovoUsuario` |
+| **João Miguel** | Repositório, requisitos, definição das tecnologias, modelagem do banco, rotas e lógica do backend, tarefa por voz, testes e deploy |
+| **Gabriel** | Diagrama de fluxo de telas, estrutura de pastas, telas `/Home` e `/listarcontatos` |
+| **Nicole** | Diagrama de atividades, README, levantamento das telas, estrutura inicial do Flask, telas de login, cadastro, redefinição de senha e especificações da tarefa |
 
-## Cronograma
-
-| Sprint | Período | Prioridade |
-|---|---|---|
-| 1 | 07/10/2026 a 08/10/2026 | Alta |
-| 2 | 09/10/2026 a 10/10/2026 | Alta |
-| 3 | 11/10/2026 a 13/10/2026 | Média |
-| 4 | 14/10/2026 a 16/10/2026 | Média |
-| 5 | 17/10/2026 a 19/10/2026 | Baixa |
+> Confira com o grupo se esta tabela reflete o que cada pessoa realmente fez e acrescente os demais integrantes.
 
 ## Equipe
 
-- João Miguel (Back-End)
-- Gabriel(Front-End)
-- Nicole(Front-End)
+- João Miguel
+- Gabriel
+- Nicole
 
+> Complete com os d
