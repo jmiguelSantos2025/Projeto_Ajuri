@@ -224,30 +224,6 @@ Projeto_Ajuri/
 └── README.md
 ```
 
-> Confira a estrutura real no repositório e acrescente as pastas que faltarem (modelos, serviços e testes).
-
-## Fluxo de trabalho no GitHub
-
-1. Nunca faça commit direto na `main`. Trabalhe na sua branch.
-2. Para trazer o que já entrou na `main` para a sua branch:
-
-   ```bash
-   git checkout main
-   git pull origin main
-   git checkout nome-da-sua-branch
-   git merge main
-   ```
-
-3. Salve o seu trabalho:
-
-   ```bash
-   git add .
-   git commit -m "Descreva o que foi feito"
-   git push
-   ```
-
-4. Abra um Pull Request da sua branch para a `main` e peça a revisão de outro integrante. A merge só acontece depois da revisão.
-
 ## Divisão de responsabilidades
 
 Baseada no cronograma do grupo (planejamento AJURI).
@@ -258,12 +234,8 @@ Baseada no cronograma do grupo (planejamento AJURI).
 | **Gabriel** | Diagrama de fluxo de telas, estrutura de pastas, telas `/Home` e `/listarcontatos` |
 | **Nicole** | Diagrama de atividades, README, levantamento das telas, estrutura inicial do Flask, telas de login, cadastro, redefinição de senha e especificações da tarefa |
 
-> Confira com o grupo se esta tabela reflete o que cada pessoa realmente fez e acrescente os demais integrantes.
-
 ## Equipe
 
-- João Miguel
-- Gabriel
-- Nicole
-
-> Complete com os d
+- João Miguel (Back-End e BD)
+- Gabriel (Front-end)
+- Nicole (Front-end)
