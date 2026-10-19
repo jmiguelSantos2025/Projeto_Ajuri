@@ -24,12 +24,9 @@ Projeto acadêmico desenvolvido em equipe, com versionamento no GitHub.
 | `/cadastrarNovoUsuario` | Criar conta |
 | `/RedefinirSenha` | Pedir link de redefinição de senha |
 | `/novaSenha` | Definir a nova senha pelo link recebido |
-| `/Home` | Lista de tarefas, contatos e janelas de criação e exclusão |
+| `/home` | Lista de tarefas, contatos e janelas de criação e exclusão |
 | `/especificacoesTarefas` | Editar uma tarefa |
 | `/listarcontatos` | Lista de contatos |
-| `/logout` | Sair |
-
-> As rotas diferenciam maiúsculas de minúsculas. Use os nomes exatamente como estão na tabela.
 
 ## Valores de status e prioridade
 
