@@ -40,7 +40,7 @@ Projeto acadêmico desenvolvido em equipe, com versionamento no GitHub.
 
 ## Fluxo da aplicação
 
-![Diagrama de atividades](docs/diagrama-de-atividades.png)
+<img width="680" height="930" alt="DIAGRAMA DE ATIVIDADES" src="https://github.com/user-attachments/assets/cd20d43e-3cd2-437d-a494-247c8d29bd3e" />
 
 ## Tecnologias
 
